@@ -5,6 +5,8 @@ import { router as customerRoutes } from "./core/customer/routes";
 const app = express();
 const port = 3000;
 
+app.use(express.json());
+
 app.use(moderatorRoutes).use(customerRoutes);
 
 app.listen(port, () => {
