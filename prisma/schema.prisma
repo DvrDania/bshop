@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model diesel_schema_migrations {
+  version String   @id @db.VarChar(50)
+  run_on  DateTime @default(now()) @db.Timestamp(6)
+
+  @@map("__diesel_schema_migrations")
+}
+
+model ingredients {
+  id                     Int                      @id @default(autoincrement())
+  name                   String                   @db.VarChar
+  amount                 Int
+  category               ingredient_category
+  price                  Float                    @db.Real
+  order_item_ingredients order_item_ingredients[]
+}
+
+model order_item_ingredients {
+  id            Int         @id @default(autoincrement())
+  order_item_id Int
+  ingredient_id Int
+  amount        Int
+  total         Float       @db.Real
+  ingredients   ingredients @relation(fields: [ingredient_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  order_items   order_items @relation(fields: [order_item_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model order_items {
+  id                     Int                      @id @default(autoincrement())
+  order_id               Int
+  total                  Float                    @db.Real
+  orders                 orders                   @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  order_item_ingredients order_item_ingredients[]
+}
+
+model orders {
+  id           Int           @id @default(autoincrement())
+  table_number Int
+  status       order_status
+  total        Float         @db.Real
+  tables       tables        @relation(fields: [table_number], references: [number], onDelete: NoAction, onUpdate: NoAction)
+  order_items  order_items[]
+}
+
+model tables {
+  number Int          @id
+  status table_status
+  orders orders[]
+}
+
+enum ingredient_category {
+  bun
+  burger
+  topping
+  sauce
+  side_dish
+  drink
+}
+
+enum order_status {
+  not_paid
+  in_queue
+  processing
+  fulfilled
+}
+
+enum table_status {
+  available
+  in_use
+}
