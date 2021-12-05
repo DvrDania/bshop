@@ -3,7 +3,7 @@ import { router as moderatorRoutes } from "./core/moderator/routes";
 import { router as customerRoutes } from "./core/customer/routes";
 
 const app = express();
-const port = 3000;
+const port = 8000;
 
 app.use(express.json());
 
